@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WooSoaP(반응형웹)</title>
+    <link rel="stylesheet" href="woosoap-master.css">
+    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />-->
+    <style>
+        @font-face {
+            font-family: 'Eulyoo1945';
+            src: url('./font/Eulyoo1945-Regular.otf')format('opentype');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Eulyoo1945';
+            src: url('./font/Eulyoo1945-SemiBold.otf') format('opentype');
+            font-weight: 600;
+            font-style: normal;
+        }
+    </style>
+
+    <script src="js/jquery-4.0.0.min.js"></script>
+    <script>
+        $(function () {
+            /*자바스크립트 소스*/
+            const toggleBtn = document.getElementById('side-btn');
+            const closeBtn = document.getElementById('close-btn');
+            const sideMenu = document.getElementById('side-menu');
+
+            // 메뉴 열기
+            toggleBtn.addEventListener('click', () => {
+                sideMenu.classList.add('active');
+            });
+
+            // 메뉴 닫기 (X 버튼)
+            closeBtn.addEventListener('click', () => {
+                sideMenu.classList.remove('active');
+            });
+
+        });
+    </script>
+</head>
+<script>
+    const cards = document.querySelectorAll('.best .slide ul li.gr1');
+
+    cards.forEach(card => {
+        // 모바일/태블릿 터치 시작 이벤트
+        card.addEventListener('touchstart', function (e) {
+            // 다른 카드들에 적용된 'on' 클래스는 모두 제거 (하나만 켜지게)
+            cards.forEach(c => {
+                if (c !== card) c.classList.remove('on');
+            });
+
+            // 현재 터치한 카드에 'on' 클래스 토글 (켜고 끄기)
+            this.classList.toggle('on');
+        });
+    });
+
+    // 카드 외에 다른 배경을 터치하면 그라디언트 닫히기
+    document.addEventListener('touchstart', function (e) {
+        if (!e.target.closest('.gr1')) {
+            cards.forEach(c => c.classList.remove('on'));
+        }
+    });
+</script>
+<script>
+    //BEST 스크롤(Drag to Scroll)
+    document.addEventListener("DOMContentLoaded", () => {
+        const slider = document.querySelector('.slide');
+        if (!slider) return;
+
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        let isDragging = false; 
+
+        // 1. 마우스를 누를 때 (드래그 시작)
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            isDragging = false; 
+            
+            // 💡 클릭 시점의 정확한 마우스 좌표와 현재 스크롤 위치를 기록합니다.
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+
+        // 2. 마우스를 누른 채로 움직일 때 (실제 스크롤 제어)
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return; // 마우스가 눌려있지 않다면 코드를 아예 실행하지 않음
+            
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 2; // 스크롤 속도 배율
+            
+            // 💡 [핵심 보완] 아주 미세한 진동(5픽셀 이하)이 아닌 실제 움직임이 있을 때만 드래그로 판정
+            if (Math.abs(walk) > 5) {
+                isDragging = true; 
+                e.preventDefault(); // 브라우저 고유의 이미지 끌기/선택 기능 강제 차단
+                slider.scrollLeft = scrollLeft - walk;
+            }
+        });
+
+        // 3. 마우스를 뗄 때 (드래그 종료)
+        // 💡 [핵심 보완] slider뿐만 아니라 브라우저 전체 창(window)에서 마우스가 떨어져도 감지하도록 차단막을 넓힙니다.
+        window.addEventListener('mouseup', () => {
+            isDown = false;
+        });
+
+        // 4. 마우스가 영역을 완전히 벗어날 때 (드래그 중단)
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+        });
+
+        // 5. 💡 [핵심 추가] 브라우저 자체의 이미지/텍스트 내장 드래그 기능을 원천 봉쇄합니다.
+        // 클릭이 풀리지 않고 계속 혼자 움직이던 버그의 근본적인 원인을 해결합니다.
+        slider.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+        });
+
+        // 6. 드래그 중 단순 클릭으로 오인되어 링크 이동하는 현상 방어
+        const links = slider.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (isDragging) {
+                    e.preventDefault(); // 드래그 중이었다면 링크 페이지 이동을 막음
+                }
+            });
+        });
+    });
+</script>
+
+<body>
+    <!--
+    <div id="intro">
+        <p>WooSoaP</p>
+    </div>
+    -->
+
+    <!-- 데스크탑 nav -->
+    <div id="navbar">
+        <ul class="nav">
+            <li><a href="brand1.html">BRAND</a></li>
+            <li><a href="shop.html">SHOP</a></li>
+            <li>
+                <a class="c" href="index.html">W.Soap</a>
+            </li>
+            <li><a href="#">LOGIN</a></li>
+            <li><a href="store.html">STORE</a></li>
+        </ul>
+
+
+        <!-- 태블릿 nav -->
+        <div class="tablet-nav">
+            <a class="tablet-logo" href="index.html">
+                W.Soap
+            </a>
+
+            <div class="tablet-icon">
+                <a href="#">
+                    <img src="image/search.svg" alt="검색">
+                </a>
+
+                <a href="#">
+                    <img src="image/garden_cart.svg" alt="장바구니">
+                </a>
+
+                <!--<button class="hamburger">
+                    <img src="image/menu.svg" alt="메뉴">
+                </button>-->
+                <button id="side-btn" class="hamburger side-btn" aria-label="메뉴 열기">☰</button>
+            </div>
+        </div>
+
+        <!-- 태블릿 햄버거 메뉴 -->
+        <div id="side-menu" class="side-menu">
+            <button id="close-btn" class="close-btn" aria-label="메뉴 닫기">×</button>
+            <ul class="tablet-menu">
+                <li class="profile"><img src="image/profile3.svg"></li>
+                <li><a href="brand1.html">BRAND</a></li>
+                <li><a href="shop.html">SHOP</a></li>
+                <li><a href="#">LOGIN</a></li>
+                <li><a href="store.html">STORE</a></li>
+                <li><a href="#">SERVICE</a></li>
+            </ul>
+        </div>
+
+    </div>
+    <!--navbar end-->
+
+
+    <div id="main">
+        <div class="intro">
+            <div class="i-to">
+                <p class="i-Description">
+                    자연의 성분을 그대로 담아 더 깨끗하게
+                </p>
+                <p class="stno">
+                    순한 자연의 곁을 그대로 담은 우솝은<br>
+                    천연비누만의 편안함으로<br>
+                    당신의 피부를 지켜드릴꺼에요.
+                </p>
+            </div>
+        </div>
+        <!--intro end-->
+
+        <div class="granpa">
+            <div class="g-frame">
+                <img src="image/granpa.png" alt="할아버지가 비누를 실고 자전거를 타고 집을 나선다">
+            </div>
+            <div class="g-Description">
+                <p>
+                    자연은 서두르지 않습니다.<br>
+                </p>
+                <span>
+                    햇살과 바람, 그리고
+                    시간이 모여 하나의<br>
+                    비누가 됩니다. 정성껏 만든 비누를<br>
+                    바구니에 담아 천천히 길을 나섭니다.<br>
+                    숲의 향기와 온기를 전하기 위해서입니다.<br>
+                    누군가의 하루 끝이 조금 더
+                    따뜻해질 수 있도록.<br>
+                </span>
+            </div>
+
+        </div>
+        <!--granpa end-->
+
+        <div class="skin">
+            <img class="story5" src="image/story5.png" alt="화장실 앞에 들어선 순간">
+            <div class="box3">
+                <p class="foryour1">
+                    FOR YOUR
+                </p>
+                <p class="for1">
+                    피부에 닿는 순간,<br>
+                    자연은 가장 가까워집니다.<br>
+
+                    은은한 향과 부드러운 거품이<br>
+                    하루의 시작과 끝을 포근하게
+                    감싸줍니다.
+                </p>
+            </div>
+            <div class="box4">
+                <p class="foryour2">
+                    FOR YOUR
+                </p>
+
+                <p class="for2">
+                    바람이 스치듯 부드럽게,<br>
+                    햇살이 머물 듯 따뜻하게.<br>
+
+                    자연의 순함을 담은 비누로<br>
+                    오늘의 피부에 작은 휴식을.
+                </p>
+            </div>
+            <img class="story6" src="image/story6.png" alt="비누를 사용하여 손을 씻는다">
+
+        </div>
+        <!--skin end-->
+
+        <div class="best">
+            <p class="b">BEST</p>
+            <p class="b-Description">피부에도, 지구에도 부담을 덜어주는 선택</p>
+            <div class="slide">
+                <ul>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft2.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft3.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft4.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft2.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft3.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft4.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft2.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft4.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft2.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="gr1">
+                        <a href="#">
+                            <img src="image/soft2.webp" alt="천연비누">
+                            <div class="fill-gradient">
+                                <p>천연비누</p>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button onclick="location.href='shop.html'">자세히 보기</button>
+        </div>
+        <!--best end-->
+
+        <div class="scent-archive">
+            <img src="image/woman-standing.jpg" alt="자연적인">
+            <div class="area"></div>
+            <div class="first-scent">
+                <h3 class="am">AM</h3>
+                <ul class="box1">
+                    <li>
+                        <div class="circle">
+                            <img src="image/morning1-2.png" alt="morning">
+                        </div>
+                        <div class="discript">
+                            <a href="#">
+                                Morning
+                            </a>
+                            <p class="time">
+                                복숭아,딸기,사과,레몬,오렌지,<br>
+                                버블껌,솜사탕
+                            </p>
+                        </div>
+                    </li>
+                    <li class="end">
+                        <div class="discript2">
+                            <a href="#">
+                                Cotton
+                            </a>
+                            <p class="time">
+                                화이트 머스크, 코튼, 무화과,<br>
+                                피오니,체리블라썸,자몽
+                            </p>
+                        </div>
+                        <div class="circle">
+                            <img src="image/cotton1-3.png" alt="cotton">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="circle">
+                            <img src="image/forest.png" alt="forest">
+                        </div>
+                        <div class="discript">
+                            <a href="#">
+                                Forest
+                            </a>
+                            <p class="time">
+                                시더우드,베르가못,네롤리,<br>
+                                화이트 티,그린티,머스크
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--first-scent end-->
+            <div class="second-scent">
+                <h3 class="pm">PM</h3>
+                <ul class="box2">
+                    <li class="end">
+                        <div class="discript2">
+                            <a href="#">
+                                Quiet Garden
+                            </a>
+                            <p class="time">
+                                라벤더,로즈제라늄,<br>
+                                유칼립투스,샌달우드,허브
+                            </p>
+                        </div>
+                        <div class="circle">
+                            <img src="image/quiet-garden.png" alt="quiet garden">
+                        </div>
+                    </li>
+                    <li>
+                        <div class="circle">
+                            <img src="image/endofaday.png" alt="end of a day">
+                        </div>
+                        <div class="discript">
+                            <a href="#">
+                                End of a Day
+                            </a>
+                            <p class="time">
+                                라벤더,캐모마일,녹차,<br>
+                                알로에,밀크,비누
+                            </p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--second-scent end-->
+        </div>
+        <!--Scent Archive end-->
+
+        <div class="internal-scent">
+            <ul class="internal-name">
+                <li><a href="#">Morning</a></li>
+                <li><a href="#">Cotton</a></li>
+                <li><a href="#">Forest</a></li>
+                <li><a href="#">Quiet Garden</a></li>
+                <li><a href="#">End of a Day</a></li>
+            </ul>
+
+            <ul class="morning">
+                <li><img src="image/peaches - drama.jpg" alt="복숭아"></li>
+                <li><img src="image/strawberry.jpg" alt="딸기"></li>
+                <li><img src="image/apple.jpg" alt="사과"></li>
+                <li><img src="image/cottoncandy.png" alt="솜사탕"></li>
+                <li><img src="image/Orange.png" alt="오렌지"></li>
+                <li><img src="image/Lemon.jpg" alt="레몬"></li>
+            </ul>
+        </div>
+        <!--internal-scent end-->
+
+        <div class="packaging">
+            <div class="p-frame">
+                <img src="image/packaging.jpg" alt="packaging">
+            </div>
+            <p class="p-Description">
+                자연을 닮은 순수한 온기를 그대로 담아,<br>
+                당신의 일상 속으로 조심스레 배송합니다.
+            </p>
+            <div class="h-frame">
+                <img src="image/green-door.jpg" alt="home">
+                <p>
+                    Time. 08:00 ~ 18:00<br>
+                    02-1234-5678
+                </p>
+            </div>
+        </div>
+        <!--packing end-->
+    </div>
+    <!--main end-->
+
+    <footer>
+        <div class="footer-inner">
+            <div class="Lef">
+                <h3>WooSoaP</h3>
+                <p>
+                    이용약관 | 개인정보처리방침 | 사업자정보확인<br>
+                    Copyright © 우솝 공식 웹사이트 | WooSoaP<br>
+                    2026 우솝 All Rights Reserved.
+                </p>
+            </div>
+
+            <div class="Rig">
+                <p>
+                    Operating time . 10:00~20:00<br>
+                    Weekend . Holiday off<br>
+                    mail . namelesssd0t@gmail.com<br>
+                    Location . 서울 광진구 능동로 216<br>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
